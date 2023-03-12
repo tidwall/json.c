@@ -1,0 +1,13 @@
+*.dSYM
+.DS_Store
+.vscode
+a.out
+*.test
+*.o
+*.svg
+*.profraw
+*.profdata
+*.cov.html
+tests/bench/
+tests/fuzz/testdata
+fuzz.prog
