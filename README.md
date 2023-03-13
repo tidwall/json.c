@@ -1,6 +1,6 @@
 # json.c
 
-An fast little JSON library for C.
+A fast little JSON library for C.
 
 ## Features
 
@@ -9,7 +9,7 @@ An fast little JSON library for C.
 - **Portable.** Uses standard C.
 - Parses and validates UTF-8. 
 - Access elements using a dot path syntax.
-- Works directly with the raw JSON.
+- Works directly on the raw JSON.
 - Uses no memory allocations. 
 
 The primary goal of this library is to provide a set of functions for
