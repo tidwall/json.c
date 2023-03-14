@@ -2,9 +2,7 @@
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
 
-#include <stdio.h>
 #include <limits.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include "json.h"
