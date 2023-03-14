@@ -14,7 +14,7 @@ A fast little JSON library for C.
 
 The primary goal of this library is to provide a set of functions for
 quickly cherry-picking elements from large raw JSON documents, without 
-additional allocations or having to parse the entire document.
+additional allocations.
 
 ## Example 
 
