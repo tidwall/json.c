@@ -291,24 +291,24 @@ static int64_t vpayload(const uint8_t *data, int64_t dlen, int64_t i) {
     return -(i+1);
 }
 
-struct json_valid json_validn_ex(const char *str, size_t len, int opts) {
+struct json_valid json_validn_ex(const char *json_str, size_t len, int opts) {
     (void)opts; // for future use
     if ((int64_t)len < 0) return (struct json_valid) { 0 };
-    int64_t pos = vpayload((uint8_t*)str, len, 0);
+    int64_t pos = vpayload((uint8_t*)json_str, len, 0);
     if (pos > 0) return (struct json_valid) { .valid = true };
     return (struct json_valid) { .pos = (-pos)-1 };
 }
 
-struct json_valid json_valid_ex(const char *str, int opts) {
-    return json_validn_ex(str, str?strlen(str):0, opts);
+struct json_valid json_valid_ex(const char *json_str, int opts) {
+    return json_validn_ex(json_str, json_str?strlen(json_str):0, opts);
 }
 
-bool json_validn(const char *str, size_t len) {
-    return json_validn_ex(str, len, 0).valid;
+bool json_validn(const char *json_str, size_t len) {
+    return json_validn_ex(json_str, len, 0).valid;
 }
 
-bool json_valid(const char *str) {
-    return json_validn(str, str?strlen(str):0);
+bool json_valid(const char *json_str) {
+    return json_validn(json_str, json_str?strlen(json_str):0);
 }
 
 // don't changes these flags without changing the numtoks table too.
@@ -464,16 +464,16 @@ struct json json_next(struct json json) {
     return peek_any(raw, end);
 }
 
-struct json json_parsen(const char *json, size_t len) {
+struct json json_parsen(const char *json_str, size_t len) {
     if ((int64_t)len < 0) return (struct json){ 0 };
-    if (len > 0 && (json[0] == '[' || json[0] == '{')) {
-        return jmake(0, json, json+len, 0);
+    if (len > 0 && (json_str[0] == '[' || json_str[0] == '{')) {
+        return jmake(0, json_str, json_str+len, 0);
     }
-    return peek_any((uint8_t*)json, (uint8_t*)json+len);
+    return peek_any((uint8_t*)json_str, (uint8_t*)json_str+len);
 }
 
-struct json json_parse(const char *json) {
-    return json_parsen(json, json?strlen(json):0);
+struct json json_parse(const char *json_str) {
+    return json_parsen(json_str, json_str?strlen(json_str):0);
 }
 
 bool json_exists(struct json json) {

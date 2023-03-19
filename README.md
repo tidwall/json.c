@@ -201,8 +201,8 @@ If you happen to know the length of the string ahead of time then it'll
 likely be more efficient to provide it using one of the following.
 
 ```c
-bool json_validn(const char *str, size_t len);
-struct json json_parsen(const char *str, size_t len);
+bool json_validn(const char *json_str, size_t len);
+struct json json_parsen(const char *json_str, size_t len);
 int json_raw_comparen(struct json json, const char *str, size_t len);
 int json_string_comparen(struct json json, const char *str, size_t len);
 struct json json_object_getn(struct json json, const char *key, size_t len);

@@ -27,9 +27,9 @@ struct json_valid {
 
 // json_valid returns true if the input is valid json data.
 bool json_valid(const char *json_str);
-bool json_validn(const char *str, size_t len);
-struct json_valid json_valid_ex(const char *str, int opts);
-struct json_valid json_validn_ex(const char *str, size_t len, int opts);
+bool json_validn(const char *json_str, size_t len);
+struct json_valid json_valid_ex(const char *json_str, int opts);
+struct json_valid json_validn_ex(const char *json_str, size_t len, int opts);
 
 // json_parse parses the input data and returns a json value.
 //
@@ -44,7 +44,7 @@ struct json_valid json_validn_ex(const char *str, size_t len, int opts);
 // the result, beyond the lifetime of the originating 'json_str', then it will
 // likely result in a memory fault or some other type of undefined corruption.
 struct json json_parse(const char *json_str);
-struct json json_parsen(const char *str, size_t len);
+struct json json_parsen(const char *json_str, size_t len);
 
 // json_first returns the json's first child.
 //
