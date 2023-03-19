@@ -142,7 +142,7 @@ size_t json_string_length(struct json json);
 // If the returned length is greater than nbytes-1, then only a parital copy
 // occurred, for example:
 //    
-//    char buf[64];
+//    char str[64];
 //    size_t len = json_string_copy(json, str, sizeof(str));
 //    if (len > sizeof(str)-1) {
 //        // ... copy did not complete ...
