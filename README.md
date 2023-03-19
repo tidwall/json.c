@@ -95,7 +95,7 @@ enum json_type json_type(struct json json);
 // retain this data for longer that the data from the original 'json_parse'
 // call then you should copy it first, such as:
 // 
-//    long len = json_raw_length(json);
+//    size_t len = json_raw_length(json);
 //    char *raw = malloc(len+1);
 //    memcpy(raw, json_raw(json), len);
 //    raw[len] = '\0';
@@ -103,7 +103,7 @@ enum json_type json_type(struct json json);
 const char *json_raw(struct json json);
 
 // json_raw_length returns the length of the raw json data.
-long json_raw_length(struct json json);
+size_t json_raw_length(struct json json);
 
 // Compare a json's raw data with a C string.
 //
@@ -133,7 +133,7 @@ int json_string_compare(struct json json, const char *str);
 
 // json_string_length returns the number of characters needed to represent the
 // JSON as a UTF-8 string.
-long json_string_length(struct json json);
+size_t json_string_length(struct json json);
 
 // json_string_copy copies a json string into the provided C string buffer.
 //
@@ -143,19 +143,19 @@ long json_string_length(struct json json);
 // occurred, for example:
 //    
 //    char buf[64];
-//    long len = json_string_copy(json, str, sizeof(str));
+//    size_t len = json_string_copy(json, str, sizeof(str));
 //    if (len > sizeof(str)-1) {
 //        // ... copy did not complete ...
 //    }
 //
-long json_string_copy(struct json json, char *str, size_t nbytes);
+size_t json_string_copy(struct json json, char *str, size_t nbytes);
 
 // json_array_get returns the child json element at index. This is to be used
 // on json with the type JSON_ARRAY.
-struct json json_array_get(struct json json, long index);
+struct json json_array_get(struct json json, size_t index);
 
 // json_array_count returns the number of elements in a json array.
-long json_array_count(struct json json);
+size_t json_array_count(struct json json);
 
 // json_object_get returns the json value for its key. This is to be used on
 // json with the type JSON_OBJECT.
@@ -191,7 +191,7 @@ bool json_bool(struct json json);
 // to store the escaped JSON string in the C string buffer.
 // If the returned length is greater than n-1, then only a parital copy
 // occurred. In other words the 
-long json_escape(const char *str,char *escaped, size_t n); 
+size_t json_escape(const char *str,char *escaped, size_t n); 
 
 ```
 
@@ -201,14 +201,14 @@ If you happen to know the length of the string ahead of time then it'll
 likely be more efficient to provide it using one of the following.
 
 ```c
-bool json_validn(const char *str, long len);
-struct json json_parsen(const char *str, long len);
-int json_raw_comparen(struct json json, const char *str, long len);
-int json_string_comparen(struct json json, const char *str, long len);
-struct json json_object_getn(struct json json, const char *key, long len);
-long json_escapen(const char *str, long len, char *esc, size_t n); 
-struct json json_object_getn(struct json json, const char *key, long len);
-struct json json_getn(const char *json_str, long len, const char *path);
+bool json_validn(const char *str, size_t len);
+struct json json_parsen(const char *str, size_t len);
+int json_raw_comparen(struct json json, const char *str, size_t len);
+int json_string_comparen(struct json json, const char *str, size_t len);
+struct json json_object_getn(struct json json, const char *key, size_t len);
+size_t json_escapen(const char *str, size_t len, char *esc, size_t n); 
+struct json json_object_getn(struct json json, const char *key, size_t len);
+struct json json_getn(const char *json_str, size_t len, const char *path);
 ```
 
 ## Path syntax

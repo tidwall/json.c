@@ -17,7 +17,7 @@ trap finish EXIT
 
 # Use address sanitizer if possible
 if [[ "$1" != bench* ]]; then
-    CFLAGS="-O0 -g3 -Wall $CFLAGS"
+    CFLAGS="-O0 -g3 -Wextra $CFLAGS"
     if [[ "$CC" == "" && "`which clang`" != "" ]]; then
         CC=clang
         CFLAGS="$CFLAGS -fno-omit-frame-pointer"
@@ -37,7 +37,7 @@ if [[ "$1" != bench* ]]; then
             WITHCOV="1"
         fi
     fi
-    CFLAGS=${CFLAGS:-"-O0 -g3 -Wall"}
+    CFLAGS=${CFLAGS:-"-O0 -g3 -Wextra"}
 else
     CFLAGS=${CFLAGS:-"-O3"}
 fi

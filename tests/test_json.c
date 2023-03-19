@@ -1,7 +1,7 @@
 #include "tests.h"
 
 void test_json_parse_testfiles() {
-    for (int i = 0; i < sizeof(names)/sizeof(char *); i++){
+    for (size_t i = 0; i < sizeof(names)/sizeof(char *); i++){
         char path[128];
         // if (strcmp(names[i], "update-center.json")) continue;
         // printf("%s\n", names[i]);
@@ -689,7 +689,7 @@ void test_json_object() {
 void strings_should_match(const char *json_str, const char *exp) {
     struct json json = json_parse(json_str);
     char buf[1024];
-    long len = json_string_copy(json, buf, sizeof(buf));
+    size_t len = json_string_copy(json, buf, sizeof(buf));
     assert(len == strlen(exp));
     assert(strcmp(exp, buf) == 0);
     assert(json_string_length(json) == len);
@@ -765,7 +765,7 @@ void esc_should_match_len_len(char *input, int inputlen, char *exp, int explen) 
     char *got = malloc(explen+1);
     assert(got);
     memset(got, 0, explen+1);
-    long n;
+    size_t n;
     if (inputlen == -1) {
         n = json_escape(input, got, explen);
     } else {
@@ -837,7 +837,6 @@ void test_json_escape_string() {
     esc_should_match("\xc3\xc3", "\"��\"");
 
     esc_should_match_len_len("hello", -1, "\"hello\"", -1);
-    esc_should_match_len_len("hello", -2, "\"\"", -1);
     esc_should_match_len_len("hello", -1, "\"h", 3);
     esc_should_match_len_len("hello", -1, "\"", 2);
     esc_should_match_len_len("hello", -1, "", 1);
