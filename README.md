@@ -1,6 +1,6 @@
 # json.c
 
-A fast little JSON library for C.
+A fast 0 alloc JSON parser for C.
 
 ## Features
 
