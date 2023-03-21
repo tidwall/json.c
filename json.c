@@ -1,11 +1,37 @@
+// https://github.com/tidwall/json.c
+//
 // Copyright 2023 Joshua J Baker. All rights reserved.
 // Use of this source code is governed by an MIT-style
 // license that can be found in the LICENSE file.
-
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef JSON_STATIC
 #include "json.h"
+#else
+enum json_type { 
+    JSON_NULL,
+    JSON_FALSE,
+    JSON_NUMBER,
+    JSON_STRING,
+    JSON_TRUE,
+    JSON_ARRAY,
+    JSON_OBJECT,
+};
+struct json { void *private[4]; };
+
+struct json_valid {
+    bool valid;
+    size_t pos;
+};
+
+#define JSON_EXTERN static
+#endif
+
+#ifndef JSON_EXTERN
+#define JSON_EXTERN
+#endif
 
 #ifndef JSON_MAXDEPTH
 #define JSON_MAXDEPTH 1024
@@ -66,6 +92,12 @@ static inline int64_t vesc(const uint8_t *json, int64_t jlen, int64_t i) {
     return -(i+1);
 }
 
+#undef ludo4
+#undef ludo8
+#undef ludo16
+#undef for1
+#undef for8
+#undef for16
 #define ludo4(i, f) f; i++; f; i++; f; i++; f; i++;
 #define ludo8(i, f) ludo4(i, f); ludo4(i, f);
 #define ludo16(i, f) ludo8(i, f); ludo8(i, f);
@@ -154,7 +186,6 @@ static int64_t vnumber(const uint8_t *data, int64_t dlen, int64_t i) {
     }
     return i;
 }
-
 
 static int64_t vnull(const uint8_t *data, int64_t dlen, int64_t i) {
     return i+3 <= dlen && data[i] == 'u' && data[i+1] == 'l' &&
@@ -291,6 +322,7 @@ static int64_t vpayload(const uint8_t *data, int64_t dlen, int64_t i) {
     return -(i+1);
 }
 
+JSON_EXTERN
 struct json_valid json_validn_ex(const char *json_str, size_t len, int opts) {
     (void)opts; // for future use
     if ((int64_t)len < 0) return (struct json_valid) { 0 };
@@ -299,15 +331,15 @@ struct json_valid json_validn_ex(const char *json_str, size_t len, int opts) {
     return (struct json_valid) { .pos = (-pos)-1 };
 }
 
-struct json_valid json_valid_ex(const char *json_str, int opts) {
+JSON_EXTERN struct json_valid json_valid_ex(const char *json_str, int opts) {
     return json_validn_ex(json_str, json_str?strlen(json_str):0, opts);
 }
 
-bool json_validn(const char *json_str, size_t len) {
+JSON_EXTERN bool json_validn(const char *json_str, size_t len) {
     return json_validn_ex(json_str, len, 0).valid;
 }
 
-bool json_valid(const char *json_str) {
+JSON_EXTERN bool json_valid(const char *json_str) {
     return json_validn(json_str, json_str?strlen(json_str):0);
 }
 
@@ -449,14 +481,14 @@ static struct json peek_any(uint8_t *raw, uint8_t *end) {
     return (struct json){ 0 };
 }
 
-struct json json_first(struct json json) {
+JSON_EXTERN struct json json_first(struct json json) {
     uint8_t *raw = jraw(json);
     uint8_t *end = jend(json);
     if (end <= raw || (*raw != '{' &&  *raw != '[')) return (struct json){0};
     return peek_any(raw+1, end);
 }
 
-struct json json_next(struct json json) {
+JSON_EXTERN struct json json_next(struct json json) {
     uint8_t *raw = jraw(json);
     uint8_t *end = jend(json);
     if (end <= raw) return (struct json){ 0 };
@@ -464,7 +496,7 @@ struct json json_next(struct json json) {
     return peek_any(raw, end);
 }
 
-struct json json_parsen(const char *json_str, size_t len) {
+JSON_EXTERN struct json json_parsen(const char *json_str, size_t len) {
     if ((int64_t)len < 0) return (struct json){ 0 };
     if (len > 0 && (json_str[0] == '[' || json_str[0] == '{')) {
         return jmake(0, json_str, json_str+len, 0);
@@ -472,19 +504,19 @@ struct json json_parsen(const char *json_str, size_t len) {
     return peek_any((uint8_t*)json_str, (uint8_t*)json_str+len);
 }
 
-struct json json_parse(const char *json_str) {
+JSON_EXTERN struct json json_parse(const char *json_str) {
     return json_parsen(json_str, json_str?strlen(json_str):0);
 }
 
-bool json_exists(struct json json) {
+JSON_EXTERN bool json_exists(struct json json) {
     return jraw(json) && jend(json);
 }
 
-const char *json_raw(struct json json) {
+JSON_EXTERN const char *json_raw(struct json json) {
     return (char*)jraw(json);
 }
 
-size_t json_raw_length(struct json json) {
+JSON_EXTERN size_t json_raw_length(struct json json) {
     if (jlen(json)) return jlen(json);
     if (jraw(json) < jend(json)) return count_nested(jraw(json), jend(json));
     return 0;
@@ -497,11 +529,11 @@ static const uint8_t typetoks[256] = {
     0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,6,0,0,0,0,
 };
 
-enum json_type json_type(struct json json) {
+JSON_EXTERN enum json_type json_type(struct json json) {
     return jraw(json) < jend(json) ? typetoks[*jraw(json)] : JSON_NULL;
 }
 
-struct json json_ensure(struct json json) {
+JSON_EXTERN struct json json_ensure(struct json json) {
     return jmake(jinfo(json), jraw(json), jend(json), json_raw_length(json));
 }
 
@@ -608,6 +640,7 @@ static inline int encode_codepoint(uint8_t dst[], uint32_t cp) {
     } \
 }
 
+JSON_EXTERN 
 int json_raw_comparen(struct json json, const char *str, size_t len) {
     char *raw = (char*)jraw(json);
     if (!raw) raw = "";
@@ -615,11 +648,11 @@ int json_raw_comparen(struct json json, const char *str, size_t len) {
     return strcmpn(raw, rlen, str, len);
 }
 
-int json_raw_compare(struct json json, const char *str) {
+JSON_EXTERN int json_raw_compare(struct json json, const char *str) {
     return json_raw_comparen(json, str, strlen(str));
 }
 
-size_t json_string_length(struct json json) {
+JSON_EXTERN size_t json_string_length(struct json json) {
     size_t len = json_raw_length(json);
     if (json_type(json) != JSON_STRING) {
         return len;
@@ -634,6 +667,7 @@ size_t json_string_length(struct json json) {
     return count;
 }
 
+JSON_EXTERN 
 int json_string_comparen(struct json json, const char *str, size_t slen) {
     if (json_type(json) != JSON_STRING) {
         return json_raw_comparen(json, str, slen);
@@ -662,11 +696,12 @@ done:
     return cmp;
 }
 
+JSON_EXTERN 
 int json_string_compare(struct json json, const char *str) {
     return json_string_comparen(json, str, str?strlen(str):0);
 }
 
-size_t json_string_copy(struct json json, char *str, size_t n) {
+JSON_EXTERN size_t json_string_copy(struct json json, char *str, size_t n) {
     size_t len = json_raw_length(json);
     uint8_t *raw = jraw(json);
     bool isjsonstr = json_type(json) == JSON_STRING;
@@ -693,7 +728,7 @@ size_t json_string_copy(struct json json, char *str, size_t n) {
     return count;
 }
 
-size_t json_array_count(struct json json) {
+JSON_EXTERN size_t json_array_count(struct json json) {
     size_t count = 0;
     if (json_type(json) == JSON_ARRAY) {
         json = json_first(json);
@@ -705,7 +740,7 @@ size_t json_array_count(struct json json) {
     return count;
 }
 
-struct json json_array_get(struct json json, size_t index) {
+JSON_EXTERN struct json json_array_get(struct json json, size_t index) {
     if (json_type(json) == JSON_ARRAY) {
         json = json_first(json);
         while (json_exists(json)) {
@@ -717,6 +752,7 @@ struct json json_array_get(struct json json, size_t index) {
     return (struct json) { 0 };
 }
 
+JSON_EXTERN
 struct json json_object_getn(struct json json, const char *key, size_t len) {
     if (json_type(json) == JSON_OBJECT) {
         json = json_first(json);
@@ -730,7 +766,7 @@ struct json json_object_getn(struct json json, const char *key, size_t len) {
     return (struct json) { 0 };
 }
 
-struct json json_object_get(struct json json, const char *key) {
+JSON_EXTERN struct json json_object_get(struct json json, const char *key) {
     return json_object_getn(json, key, key?strlen(key):0);
 }
 
@@ -796,7 +832,7 @@ clamp:
     return y;
 }
 
-double json_double(struct json json) {
+JSON_EXTERN double json_double(struct json json) {
     switch (json_type(json)) {
     case JSON_TRUE:
         return 1;
@@ -810,7 +846,7 @@ double json_double(struct json json) {
     }
 }
 
-int64_t json_int64(struct json json) {
+JSON_EXTERN int64_t json_int64(struct json json) {
     switch (json_type(json)) {
     case JSON_TRUE:
         return 1;
@@ -824,14 +860,14 @@ int64_t json_int64(struct json json) {
     }
 }
 
-int json_int(struct json json) {
+JSON_EXTERN int json_int(struct json json) {
     int64_t x = json_int64(json);
     if (x < (int64_t)INT_MIN) return INT_MIN;
     if (x > (int64_t)INT_MAX) return INT_MAX;
     return x;
 }
 
-uint64_t json_uint64(struct json json) {
+JSON_EXTERN uint64_t json_uint64(struct json json) {
     switch (json_type(json)) {
     case JSON_TRUE:
         return 1;
@@ -845,7 +881,7 @@ uint64_t json_uint64(struct json json) {
     }
 }
 
-bool json_bool(struct json json) {
+JSON_EXTERN bool json_bool(struct json json) {
     switch (json_type(json)) {
     case JSON_TRUE:
         return true;
@@ -890,6 +926,7 @@ jesc_append_ux(struct jesc_buf *buf, uint8_t c1, uint8_t c2, uint16_t x) {
     jesc_append2(buf, hexchars[x>>4&0xF], hexchars[x>>0&0xF]);
 }
 
+JSON_EXTERN
 size_t json_escapen(const char *str, size_t len, char *esc, size_t n) {
     uint8_t cpbuf[4];
     struct jesc_buf buf  = { .esc = (uint8_t*)esc, .esclen = n };
@@ -936,10 +973,11 @@ size_t json_escapen(const char *str, size_t len, char *esc, size_t n) {
     return buf.count;
 }
 
-size_t json_escape(const char *str, char *esc, size_t n) {
+JSON_EXTERN size_t json_escape(const char *str, char *esc, size_t n) {
     return json_escapen(str, str?strlen(str):0, esc, n);
 }
 
+JSON_EXTERN
 struct json json_getn(const char *json_str, size_t len, const char *path) {
     if (!path) return (struct json) { 0 };
     struct json json = json_parsen(json_str, len);
@@ -970,6 +1008,6 @@ struct json json_getn(const char *json_str, size_t len, const char *path) {
     return i == 0 ? (struct json) { 0 } : json;
 }
 
-struct json json_get(const char *json_str, const char *path) {
+JSON_EXTERN struct json json_get(const char *json_str, const char *path) {
     return json_getn(json_str, json_str?strlen(json_str):0, path);
 }
