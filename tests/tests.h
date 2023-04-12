@@ -18,7 +18,7 @@ static bool nameless_tests = false;
     } \
 }
 
-double now() {
+double now(void) {
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC, &now);
     return (now.tv_sec*1e9 + now.tv_nsec) / 1e9;

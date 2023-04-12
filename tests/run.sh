@@ -46,12 +46,7 @@ echo "CC: $CC"
 echo "CFLAGS: $CFLAGS"
 $CC --version
 
-if [[ "$1" == "fuzz" ]]; then
-    echo "FUZZING..."
-    echo $CC $CFLAGS -o fuzz.prog ../json.c fuzz.c -lm 
-    $CC $CFLAGS -o fuzz.prog ../json.c fuzz.c -lm 
-    go test fuzz/fuzz_test.go -fuzz .
-elif [[ "$1" == bench* ]]; then
+if [[ "$1" == bench* ]]; then
     echo "BENCHMARKING..."
     echo $CC $CFLAGS ../json.c bench.c -lm 
     $CC $CFLAGS ../json.c bench.c -lm 
@@ -75,9 +70,9 @@ else
         # echo $CC $CFLAGS ../json.c $f
         $CC $CFLAGS -o $f.test ../json.c -lm $f
         if [[ "$WITHCOV" == "1" ]]; then
-            LLVM_PROFILE_FILE="$f.profraw" ./$f.test $@
+            MallocNanoZone=0 LLVM_PROFILE_FILE="$f.profraw" ./$f.test $@
         else
-            ./$f.test $@
+            MallocNanoZone=0 ./$f.test $@
         fi
     done
     echo "OK"

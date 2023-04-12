@@ -1,6 +1,6 @@
 #include "tests.h"
 
-void test_json_parse_testfiles() {
+void test_json_parse_testfiles(void) {
     for (size_t i = 0; i < sizeof(names)/sizeof(char *); i++){
         char path[128];
         // if (strcmp(names[i], "update-center.json")) continue;
@@ -17,7 +17,7 @@ void test_json_parse_testfiles() {
     }
 }
 
-void test_json_parse_various() {
+void test_json_parse_various(void) {
     assert(json_exists(json_parse("{}")));
     assert(json_exists(json_parse(" {}")));
     assert(json_exists(json_parse(" {} ")));
@@ -52,7 +52,7 @@ void test_json_parse_various() {
     assert(json_exists(json_parsen(" [1] ", 5)));
 }
 
-void test_json_valid_big() {
+void test_json_valid_big(void) {
     char *json = readfile("testfiles/twitter.json", 0);
     assert(json_valid(json));
     free(json);
@@ -64,7 +64,7 @@ void test_json_valid_big() {
     free(json);
 }
 
-void test_json_valid_invalid() {
+void test_json_valid_invalid(void) {
     assert(!json_validn("{}", -2));
     assert(!json_valid(""));
     assert(!json_valid(" "));
@@ -132,7 +132,7 @@ void test_json_valid_invalid() {
     assert(json_valid("{\"ke\\ny\": \"value\"}"));
 }
 
-void test_json_iter() {
+void test_json_iter(void) {
     struct json json;
     json = json_first(json_parse("{}"));
     assert(!json_exists(json));
@@ -391,7 +391,7 @@ void test_json_iter() {
 
 }
 
-void test_json_compare() {
+void test_json_compare(void) {
     char *src = readfile("testfiles/twitter.json", 0);
     assert(json_valid(src));
     struct json json = json_parse(src);
@@ -419,7 +419,7 @@ void test_json_compare() {
     free(src);
 }
 
-void test_json_string() {
+void test_json_string(void) {
     
     struct json json;
     
@@ -587,7 +587,7 @@ void test_json_string() {
     assert(strcmp(out, exp) == 0);
 }
 
-void test_json_number() {
+void test_json_number(void) {
     assert(json_double(json_parse("123")) == 123.0);
     assert(json_double(json_parse("123.5")) == 123.5);
     double x = json_double(json_parse("9812310293810923810238012" 
@@ -646,7 +646,7 @@ void test_json_number() {
     assert(json_int(json_parse("91029310293102938102983")) == INT_MAX);
 }
 
-void test_json_bool() {
+void test_json_bool(void) {
     assert(json_bool(json_parse("true")) == true);
     assert(json_bool(json_parse("\"true\"")) == true);
     assert(json_bool(json_parse("false")) == false);
@@ -662,7 +662,7 @@ void test_json_bool() {
     assert(json_bool(json_parse("\"0\"")) == false);
 }
 
-void test_json_array() {
+void test_json_array(void) {
     assert(json_array_count(json_parse("[]")) == 0);
     assert(json_array_count(json_parse("[1,2,3,4]")) == 4);
     assert(json_array_count(json_parse("{\"1\":\"2\"}")) == 0);
@@ -674,7 +674,7 @@ void test_json_array() {
     assert(json_int64(json_array_get(json_parse("[1,2,3,4]"), 4)) == 0);
 }
 
-void test_json_object() {
+void test_json_object(void) {
     char *json_str = readfile("testfiles/twitter.json", 0);
     struct json json;
     json = json_parse(json_str);
@@ -696,7 +696,7 @@ void strings_should_match(const char *json_str, const char *exp) {
     assert(json_string_compare(json, exp) == 0);
 }
 
-void test_json_utf8() {
+void test_json_utf8(void) {
     // some of these tests are from:
     //  - https://github.com/simdjson/simdjson/blob/master/tests/unicode_tests.cpp
     //  - https://github.com/crossbario/autobahn-testsuite/tree/master/autobahntestsuite/autobahntestsuite/case
@@ -821,7 +821,7 @@ void tjson_comp(struct json tjson, struct json tjsonesc) {
     }
 }
 
-void test_json_escape_string() {
+void test_json_escape_string(void) {
     esc_should_match("hello", "\"hello\"");
     esc_should_match("", "\"\"");
     esc_should_match("\r\\", "\"\\r\\\\\"");
@@ -853,7 +853,7 @@ void test_json_escape_string() {
     free(tsrc);
 }
 
-void test_json_get() {
+void test_json_get(void) {
     char *str = readfile("testfiles/twitter.json", 0);
     assert(json_string_compare(json_get(str, "statuses.52.id"), 
         "505874877148958721") == 0);
@@ -870,7 +870,7 @@ void test_json_get() {
     
 }
 
-void test_json_max_depth() {
+void test_json_max_depth(void) {
     {
         int depth = 1000;
         char *jstr = malloc(depth*2+1);
