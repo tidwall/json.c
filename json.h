@@ -123,6 +123,10 @@ int json_string_comparen(struct json json, const char *str, size_t len);
 // JSON as a UTF-8 string.
 size_t json_string_length(struct json json);
 
+// json_string_is_escaped returns true if the json is a string that contains
+// an escape sequence.
+bool json_string_is_escaped(struct json json);
+
 // json_string_copy copies a json string into the provided C string buffer.
 //
 // Returns the number of characters, not including the null-terminator, needed

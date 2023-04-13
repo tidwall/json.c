@@ -1011,3 +1011,7 @@ struct json json_getn(const char *json_str, size_t len, const char *path) {
 JSON_EXTERN struct json json_get(const char *json_str, const char *path) {
     return json_getn(json_str, json_str?strlen(json_str):0, path);
 }
+
+JSON_EXTERN bool json_string_is_escaped(struct json json) {
+    return (jinfo(json)&IESC) == IESC;
+}

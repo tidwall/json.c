@@ -50,6 +50,8 @@ void test_json_parse_various(void) {
     assert(json_exists(json_parsen(" [1]", 4)));
     assert(json_exists(json_parsen(" {} ", 4)));
     assert(json_exists(json_parsen(" [1] ", 5)));
+    assert(!json_string_is_escaped(json_parse("\"hello\"")));
+    assert(json_string_is_escaped(json_parse("\"hel\\nlo\"")));
 }
 
 void test_json_valid_big(void) {
