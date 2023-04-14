@@ -497,7 +497,6 @@ JSON_EXTERN struct json json_next(struct json json) {
 }
 
 JSON_EXTERN struct json json_parsen(const char *json_str, size_t len) {
-    if ((int64_t)len < 0) return (struct json){ 0 };
     if (len > 0 && (json_str[0] == '[' || json_str[0] == '{')) {
         return jmake(0, json_str, json_str+len, 0);
     }
