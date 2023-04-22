@@ -500,6 +500,7 @@ JSON_EXTERN struct json json_parsen(const char *json_str, size_t len) {
     if (len > 0 && (json_str[0] == '[' || json_str[0] == '{')) {
         return jmake(0, json_str, json_str+len, 0);
     }
+    if (len == 0) return (struct json){ 0 };
     return peek_any((uint8_t*)json_str, (uint8_t*)json_str+len);
 }
 

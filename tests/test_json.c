@@ -18,6 +18,7 @@ void test_json_parse_testfiles(void) {
 }
 
 void test_json_parse_various(void) {
+    assert(!json_exists(json_parsen(NULL, 0)));
     assert(json_exists(json_parse("{}")));
     assert(json_exists(json_parse(" {}")));
     assert(json_exists(json_parse(" {} ")));
@@ -138,8 +139,6 @@ void test_json_iter(void) {
     struct json json;
     json = json_first(json_parse("{}"));
     assert(!json_exists(json));
-    json = json_first(json_parsen("{\"a\"}",-2));
-    assert(!json_exists(json));
     json = json_first(json_parse("{\"a\"}"));
     assert(json_raw_compare(json, "\"a\"") == 0);
     assert(json_exists(json));
@@ -222,7 +221,6 @@ void test_json_iter(void) {
     assert(json_raw_compare(json, "{lkjlkjasdfa}") == 0);
     json = json_parse("{lkjlkjasdfalkjlkjasdfalkjlkjasdfa}");
     assert(json_raw_compare(json, "{lkjlkjasdfalkjlkjasdfalkjlkjasdfa}") == 0);
-    
     
     // strings
     json = json_parse("\"lkjlkjasdfalkjlkjasdfalkjlkjasdfa\"");
