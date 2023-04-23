@@ -20,7 +20,7 @@ enum json_type {
     JSON_OBJECT,
 };
 
-struct json { void *private[4]; };
+struct json { void *priv[4]; };
 
 struct json_valid {
     bool valid;
