@@ -19,7 +19,7 @@ enum json_type {
     JSON_ARRAY,
     JSON_OBJECT,
 };
-struct json { void *private[4]; };
+struct json { void *priv[4]; };
 
 struct json_valid {
     bool valid;
@@ -346,13 +346,13 @@ JSON_EXTERN bool json_valid(const char *json_str) {
 // don't changes these flags without changing the numtoks table too.
 enum iflags { IESC = 1, IDOT = 2, ISCI = 4, ISIGN = 8 };
 
-#define jmake(info, raw, end, len) ((struct json) { .private = { \
+#define jmake(info, raw, end, len) ((struct json) { .priv = { \
     (void*)(uintptr_t)(info), (void*)(uintptr_t)(raw), \
     (void*)(uintptr_t)(end), (void*)(uintptr_t)(len) } })
-#define jinfo(json) ((int)(uintptr_t)((json).private[0]))
-#define jraw(json) ((uint8_t*)(uintptr_t)((json).private[1]))
-#define jend(json) ((uint8_t*)(uintptr_t)((json).private[2]))
-#define jlen(json) ((size_t)(uintptr_t)((json).private[3]))
+#define jinfo(json) ((int)(uintptr_t)((json).priv[0]))
+#define jraw(json) ((uint8_t*)(uintptr_t)((json).priv[1]))
+#define jend(json) ((uint8_t*)(uintptr_t)((json).priv[2]))
+#define jlen(json) ((size_t)(uintptr_t)((json).priv[3]))
 
 static const uint8_t strtoksa[256] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
