@@ -161,11 +161,22 @@ size_t json_array_count(struct json json);
 // json with the type JSON_OBJECT.
 struct json json_object_get(struct json json, const char *key);
 
-// json_get return finds json at the provide path.
+// json_get finds json at the provide path.
 //
-// The path is a series of C strings followed by zero-terminator.
+// A path is a series of keys separated by a dot.
 //
-//    json_get(doc, "name", "last", 0);
+//    json_get(json_str, "name");
+//    json_get(json_str, "user.id");
+//
+// The syntax is limited to very basic key names containing only alphanumeric
+// characters, underscores, and dashes. If you need to access keys that have a
+// broader range of characters, you can use the json_object_get and
+// json_array_get functions.
+//
+//    json_str = "{\"notes\": {\"special.info\": \"it's nice outside\"}";
+//    json = json_parse(json_str); 
+//    json = json_object_get(json, "notes"); 
+//    json = json_object_get(json, "special.info");
 //
 struct json json_get(const char *json_str, const char *path);
 
