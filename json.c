@@ -633,6 +633,7 @@ static inline int encode_codepoint(uint8_t dst[], uint32_t cp) {
                 if (1) f \
             } \
             ii--; \
+            continue; \
         default: \
             continue; \
         }; \
