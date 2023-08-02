@@ -92,18 +92,24 @@ static inline int64_t vesc(const uint8_t *json, int64_t jlen, int64_t i) {
     return -(i+1);
 }
 
-#undef ludo4
-#undef ludo8
-#undef ludo16
-#undef for1
-#undef for8
-#undef for16
-#define ludo4(i, f) f; i++; f; i++; f; i++; f; i++;
-#define ludo8(i, f) ludo4(i, f); ludo4(i, f);
-#define ludo16(i, f) ludo8(i, f); ludo8(i, f);
-#define for1(i, n, f) while(i < (n)) { f; i++; }
-#define for8(i, n, f) while(i+8 <= (n)) { ludo8(i, f); } for1(i, n, f);
-#define for16(i, n, f) while(i+16 <= (n)) { ludo16(i, f); } for1(i, n, f);
+#ifndef ludo
+#define ludo
+#define ludo1(i,f) f; i++;
+#define ludo2(i,f) ludo1(i,f); ludo1(i,f);
+#define ludo4(i,f) ludo2(i,f); ludo2(i,f);
+#define ludo8(i,f) ludo4(i,f); ludo4(i,f);
+#define ludo16(i,f) ludo8(i,f); ludo8(i,f);
+#define for1(i,n,f) while(i+1<=(n)) { ludo1(i,f); }
+#define for2(i,n,f) while(i+2<=(n)) { ludo2(i,f); } for1(i,n,f);
+#define for4(i,n,f) while(i+4<=(n)) { ludo4(i,f); } for1(i,n,f);
+#define for8(i,n,f) while(i+8<=(n)) { ludo8(i,f); } for1(i,n,f);
+#define for16(i,n,f) while(i+16<=(n)) { ludo16(i,f); } for1(i,n,f);
+#define for1c(i,n,c,f) while((c)&&i+1<=(n)) { ludo1(i,f); }
+#define for2c(i,n,c,f) while((c)&&i+2<=(n)) { ludo2(i,f); } for1c(i,n,c,f);
+#define for4c(i,n,c,f) while((c)&&i+4<=(n)) { ludo4(i,f); } for1c(i,n,c,f);
+#define for8c(i,n,c,f) while((c)&&i+8<=(n)) { ludo8(i,f); } for1c(i,n,c,f);
+#define for16c(i,n,c,f) while((c)&&i+16<=(n)) { ludo16(i,f); } for1c(i,n,c,f);
+#endif
 
 static const uint8_t strtoksu[256] = {
     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
