@@ -1,20 +1,20 @@
 # json.c
 
-A fast 0 alloc JSON parser for C.
+Fast JSON parser for C.
 
 ## Features
 
 - **Fast.** Handles gigabytes of JSON per second.
 - **Lightweight.** Small codebase that compiles quickly.
 - **Portable.** Uses standard C.
-- Parses and validates UTF-8. 
+- Parses and validates UTF-8.
 - Access elements using a dot path syntax.
 - Works directly on the raw JSON.
-- Uses no memory allocations. 
+- No memory allocations.
 
-The primary goal of this library is to provide a set of functions for
-quickly cherry-picking elements from large raw JSON documents, without 
-additional allocations.
+The primary goal of this library is to provide a set of functions for 
+quickly parsing and searching very large raw JSON buffers without 
+memory allocations.
 
 ## Example 
 
