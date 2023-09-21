@@ -330,7 +330,8 @@ static int64_t vpayload(const uint8_t *data, int64_t dlen, int64_t i) {
 JSON_EXTERN
 struct json_valid json_validn_ex(const char *json_str, size_t len, int opts) {
     (void)opts; // for future use
-    if ((int64_t)len < 0) return (struct json_valid) { 0 };
+    int64_t ilen = len;
+    if (ilen < 0) return (struct json_valid) { 0 };
     int64_t pos = vpayload((uint8_t*)json_str, len, 0);
     if (pos > 0) return (struct json_valid) { .valid = true };
     return (struct json_valid) { .pos = (-pos)-1 };
