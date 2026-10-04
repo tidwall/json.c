@@ -696,6 +696,36 @@ void strings_should_match(const char *json_str, const char *exp) {
     assert(json_string_compare(json, exp) == 0);
 }
 
+void test_json_surrogate_pairs(void) {
+    const char *pairs[][2] = {
+        { "\"\\ud800\\udc00\"", "\xf0\x90\x80\x80" }, // U+10000
+        { "\"\\ud800\\udfff\"", "\xf0\x90\x8f\xbf" }, // U+103FF
+        { "\"\\ud801\\udc00\"", "\xf0\x90\x90\x80" }, // U+10400
+        { "\"\\ud834\\udd1e\"", "\xf0\x9d\x84\x9e" }, // U+1D11E
+        { "\"\\ud83f\\udfff\"", "\xf0\x9f\xbf\xbf" }, // U+1FFFF
+        { "\"\\ud840\\udc00\"", "\xf0\xa0\x80\x80" }, // U+20000
+        { "\"\\ud840\\udc01\"", "\xf0\xa0\x80\x81" }, // U+20001
+        { "\"\\ud880\\udc01\"", "\xf0\xb0\x80\x81" }, // U+30001
+        { "\"\\udbc0\\udc00\"", "\xf4\x80\x80\x80" }, // U+100000
+        { "\"\\udbff\\udfff\"", "\xf4\x8f\xbf\xbf" }, // U+10FFFF
+    };
+    for (size_t i = 0; i < sizeof(pairs)/sizeof(pairs[0]); i++) {
+        assert(json_valid(pairs[i][0]));
+        strings_should_match(pairs[i][0], pairs[i][1]);
+    }
+    strings_should_match("\"a\\uD800\\uDC00\\uD840\\uDC01z\"",
+        "a\xf0\x90\x80\x80\xf0\xa0\x80\x81z");
+    strings_should_match("\"\\ud7ff\\ue000\"", "\xed\x9f\xbf\xee\x80\x80");
+    strings_should_match("\"\\ud800\"", "\xef\xbf\xbd");
+    strings_should_match("\"\\udbff\"", "\xef\xbf\xbd");
+    strings_should_match("\"\\udc00\"", "\xef\xbf\xbd");
+    strings_should_match("\"\\udfff\"", "\xef\xbf\xbd");
+
+    struct json object = json_parse("{\"\\ud840\\udc01\":42}");
+    assert(json_int(json_object_get(object, "\xf0\xa0\x80\x81")) == 42);
+    assert(!json_exists(json_object_get(object, "\xf0\x90\x80\x81")));
+}
+
 void test_json_utf8(void) {
     // some of these tests are from:
     //  - https://github.com/simdjson/simdjson/blob/master/tests/unicode_tests.cpp
@@ -913,6 +943,7 @@ int main(int argc, char **argv) {
     do_test(test_json_object);
     do_test(test_json_bool);
     do_test(test_json_utf8);
+    do_test(test_json_surrogate_pairs);
     do_test(test_json_escape_string);
     do_test(test_json_get);
     do_test(test_json_max_depth);
