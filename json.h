@@ -77,7 +77,7 @@ enum json_type json_type(struct json json);
 // json_raw returns the start of the raw json data.
 // 
 // This function may return NULL if the input is non-existent. Also there is
-// no guarentee that this data will be null-terminated C string. If you want to
+// no guarantee that this data will be null-terminated C string. If you want to
 // retain this data for longer that the data from the original 'json_parse'
 // call then you should copy it first, such as:
 // 
